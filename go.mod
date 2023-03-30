@@ -1,4 +1,4 @@
-module CrowdstrikeLogIngester
+module github.com/stephanwesten/logscale-ingest
 
 go 1.20
 
