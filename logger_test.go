@@ -12,7 +12,8 @@ import (
 
 // Use this test as a template for manual testing
 func _TestSetLogger(t *testing.T) {
-	l := NewLogscaleLogger("", "", "test")
+	token := "xxx-xxx-xxx-xxx-xxx"
+	l := NewLogscaleLogger("https://cloud.community.humio.com/api/v1/ingest/humio-unstructured", token, "test")
 	log.Info().Msg("test humio 1")
 	log.Info().Msg("test humio 2")
 	log.Info().Msg("test humio 3")
@@ -41,7 +42,10 @@ func TestIngest(t *testing.T) {
 
 	// test
 	log.Info().Msg("test 1")
+	log.Info().Msg("test 2")
 	msg := <-msgChannel
 	require.Contains(t, msg, "test 1")
+	msg = <-msgChannel
+	require.Contains(t, msg, "test 2")
 	l.WaitTillAllMessagesSend()
 }

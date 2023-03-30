@@ -20,7 +20,7 @@ type LogscaleLogger struct {
 	ingest_token   string
 	environment    string
 	messages       chan logEventItem
-	wg             sync.WaitGroup
+	wg             *sync.WaitGroup
 }
 
 // NewLogscaleLogger is the main entry point of this library.
@@ -31,15 +31,13 @@ func NewLogscaleLogger(crowdStrikeURL, ingest_token, environment string) Logscal
 	l := LogscaleLogger{
 		crowdStrikeURL: crowdStrikeURL,
 		ingest_token:   ingest_token,
+		environment:    environment,
 		messages:       make(chan logEventItem, 20), // totally arbitrary buffer size
+		wg:             new(sync.WaitGroup),
 	}
 	l.setLogscaleHookLog()
 	return l
 }
-
-//var crowdStrikeURL = "https://cloud.community.humio.com/api/v1/ingest/humio-unstructured"
-//var messages chan logEventItem
-//var wg sync.WaitGroup
 
 func (l LogscaleLogger) sendMsg(client *req.Client, payload []logEventItem) {
 	defer l.wg.Done()
@@ -62,7 +60,6 @@ func (l LogscaleLogger) sendMsgs(client *req.Client) {
 }
 
 func (l LogscaleLogger) setLogscaleHookLog() {
-	l.messages = make(chan logEventItem, 20) // totally arbitrary buffer size
 	client := req.SetTimeout(5*time.Second).
 		SetCommonHeader("Content-Type", "application/json").
 		SetCommonHeader("Authorization", "Bearer "+l.ingest_token).
@@ -84,5 +81,5 @@ func (l LogscaleLogger) setLogscaleHookLog() {
 func (l LogscaleLogger) WaitTillAllMessagesSend() {
 	// using waitgroup, waiting for len(messages) == 0 did not work, the last message was not sent
 	l.wg.Wait()
-	fmt.Println("All messages sent to Crowdstrike")
+	fmt.Println("All messages sent to Logscale")
 }
