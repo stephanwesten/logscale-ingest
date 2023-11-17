@@ -1,6 +1,6 @@
 module github.com/stephanwesten/logscale-ingest
 
-go 1.20
+go 1.21
 
 require (
 	github.com/imroc/req/v3 v3.33.2
