@@ -22,8 +22,7 @@ func _TestSetLogger(t *testing.T) {
 }
 
 func TestIngest(t *testing.T) {
-	var msgChannel chan string
-	msgChannel = make(chan string, 1)
+	msgChannel := make(chan string, 1)
 	// run local webserver
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("got request: %v\n", r)
@@ -47,5 +46,9 @@ func TestIngest(t *testing.T) {
 	require.Contains(t, msg, "test 1")
 	msg = <-msgChannel
 	require.Contains(t, msg, "test 2")
+	// not supported
+	// log.Err(fmt.Errorf("fooerr")).Msg("test error")
+	// msg = <-msgChannel
+	// require.Contains(t, msg, "fooerr")
 	l.WaitTillAllMessagesSend()
 }

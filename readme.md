@@ -8,3 +8,8 @@ Basis usage:
 	log.Info().Msg("test humio 3")
 	log.Error().Msg("test error")
 	logscale.WaitTillAllMessagesSend()
+
+
+This impl does not support the following usage properly:
+
+    log.Err("error msg").Msg("test humio")
